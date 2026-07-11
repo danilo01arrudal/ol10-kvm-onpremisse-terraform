@@ -210,7 +210,6 @@ Este projeto está sob a licença MIT. Consulte o arquivo [LICENSE](https://gith
 - [Oracle Linux](https://www.oracle.com/linux/) pela plataforma estável e confiável.
 - [Terraform](https://www.terraform.io/) pela poderosa ferramenta de Infrastructure as Code.
 - [KVM / libvirt](https://www.linux-kvm.org/) pela virtualização de alta performance.
-- [PostgreSQL Global Development Group](https://www.postgresql.org/) (inspiração para a estrutura do README).
 
 
 ---
