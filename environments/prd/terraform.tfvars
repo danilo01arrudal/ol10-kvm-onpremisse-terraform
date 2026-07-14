@@ -1,0 +1,21 @@
+environment = "prd"
+vm_config = {
+  name          = "ol8-prd"
+  memory        = 16384
+  vcpus         = 8
+  disk_size_gb  = 100
+  disk_size_mb  = 102400
+  swap_size_mb  = 16384
+  ip            = "192.168.122.52"
+  gateway       = "192.168.122.1"
+  netmask       = "255.255.255.0"
+  dns           = "192.168.122.1"
+  hostname      = "prd-server"
+  iso_path      = "/var/lib/libvirt/images/OracleLinux-R8-U10-x86_64-boot-uek.iso"
+  disk_path     = "/var/lib/libvirt/images/ol8-prd.qcow2"
+  network       = "default"
+  timezone      = "America/Fortaleza"
+  root_password_hash = "$6$ghi789..."
+  user_name     = "admin"
+  user_password_hash = "$6$rst345..."
+}
