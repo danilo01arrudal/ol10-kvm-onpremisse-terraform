@@ -29,7 +29,7 @@ Este projeto tem como objetivo automatizar a criação de máquinas virtuais com
 
 ## 🗂️ Estrutura do Projeto
 
-```
+```plaintext
 ol10-kvm-onpremisse-terraform/
 ├── README.md
 ├── LICENSE
@@ -42,27 +42,27 @@ ol10-kvm-onpremisse-terraform/
 ├── main.tf
 ├── outputs.tf
 ├── modules/
-│   └── vm/
-│       ├── variables.tf
-│       ├── locals.tf
-│       ├── main.tf
-│       ├── outputs.tf
-│       └── templates/
-│           └── ks.cfg.tpl
+│ └── vm/
+│ ├── variables.tf
+│ ├── locals.tf
+│ ├── main.tf
+│ ├── outputs.tf
+│ └── templates/
+│ └── ks.cfg.tpl
 ├── data/
-│   ├── kickstart/
-│   └── scripts/
-│       └── generate-hash.sh
+│ ├── kickstart/
+│ └── scripts/
+│ └── generate-hash.sh
 ├── environments/
-│   ├── dev/
-│   │   └── terraform.tfvars
-│   ├── hom/
-│   │   └── terraform.tfvars
-│   └── prd/
-│       └── terraform.tfvars
+│ ├── dev/
+│ │ └── terraform.tfvars
+│ ├── hom/
+│ │ └── terraform.tfvars
+│ └── prd/
+│ └── terraform.tfvars
 └── docs/
-    ├── architecture.md
-    └── troubleshooting.md
+├── architecture.md
+└── troubleshooting.md
 ```
 
 ## 📄 Principais Arquivos e suas Funções
@@ -120,14 +120,14 @@ Antes de executar o projeto, certifique-se de que:
 
 ## 🚀 Como Utilizar
 
-### 1. Clonar o repositório
+#### 1. Clonar o repositório
 
 ```bash
 git clone https://github.com/danilo01arrudal/ol10-kvm-onpremisse-terraform.git
 cd ol10-kvm-onpremisse-terraform
 ```
 
-### 2. Configurar as variáveis
+#### 2. Configurar as variáveis
 
 Copie o arquivo de exemplo e edite conforme sua necessidade:
 
@@ -135,14 +135,13 @@ Copie o arquivo de exemplo e edite conforme sua necessidade:
 cp terraform.tfvars.example terraform.tfvars
 ```
 
-No arquivo `terraform.tfvars`, defina pelo menos:
+No arquivo terraform.tfvars, defina pelo menos:
 
-- `vm_name`: nome desejado para a VM.
-- `ip`: endereço IP estático que a VM terá.
-- `iso_path`: caminho completo para a ISO de instalação.
-- `disk_path`: caminho onde o disco da VM será criado.
-
-**Gerando hashes de senha:**
+vm_name: nome desejado para a VM.
+ip: endereço IP estático que a VM terá.
+iso_path: caminho completo para a ISO de instalação.
+disk_path: caminho onde o disco da VM será criado.
+Gerando hashes de senha:
 
 Para gerar os hashes das senhas (root e usuário), utilize o script auxiliar:
 
@@ -150,21 +149,21 @@ Para gerar os hashes das senhas (root e usuário), utilize o script auxiliar:
 ./data/scripts/generate-hash.sh "sua_senha"
 ```
 
-Ou diretamente com `openssl`:
+Ou diretamente com openssl:
 
 ```bash
 openssl passwd -6 "sua_senha"
 ```
 
-Substitua os valores de `root_password_hash` e `user_password_hash` no `terraform.tfvars` pelos hashes gerados.
+Substitua os valores de root_password_hash e user_password_hash no terraform.tfvars pelos hashes gerados.
 
-### 3. Inicializar o Terraform
+#### 3. Inicializar o Terraform
 
 ```bash
 terraform init
 ```
 
-### 4. Planejar e aplicar
+#### 4. Planejar e aplicar
 
 Visualize o que será criado:
 
@@ -179,11 +178,12 @@ terraform apply
 ```
 
 O Terraform irá:
-- Gerar o arquivo `anaconda-ks-<nome_da_vm>.cfg` no diretório `data/kickstart/`.
-- Executar o `virt-install` com os parâmetros configurados.
-- Iniciar a instalação da VM em segundo plano (sem console gráfico).
 
-### 5. Acompanhar a instalação
+Gerar o arquivo anaconda-ks-<nome_da_vm>.cfg no diretório data/kickstart/.
+Executar o virt-install com os parâmetros configurados.
+Iniciar a instalação da VM em segundo plano (sem console gráfico).
+
+#### 5. Acompanhar a instalação
 
 Para ver o progresso da instalação, utilize o console da VM:
 
@@ -191,16 +191,17 @@ Para ver o progresso da instalação, utilize o console da VM:
 virsh console <nome_da_vm>
 ```
 
-### 6. Destruir a VM (se necessário)
+6. Destruir a VM (se necessário)
 
 ```bash
 terraform destroy
 ```
 
 Este comando irá:
-- Parar a VM (se estiver em execução).
-- Removê-la do libvirt.
-- Excluir o arquivo de disco associado.
+
+Parar a VM (se estiver em execução).
+Removê-la do libvirt.
+Excluir o arquivo de disco associado.
 
 ## 🌍 Trabalhando com Ambientes
 
@@ -213,28 +214,28 @@ terraform plan
 terraform apply
 ```
 
-Cada diretório de ambiente contém seu próprio arquivo `terraform.tfvars` com as configurações específicas daquele ambiente.
+Cada diretório de ambiente contém seu próprio arquivo terraform.tfvars com as configurações específicas daquele ambiente.
 
 ## 🔧 Personalização
 
-### Alterar parâmetros padrão
+Alterar parâmetros padrão
 
-Edite o arquivo `variables.tf` (raiz) para modificar os valores padrão das variáveis (como memória, vCPUs, tamanho do disco, etc.). Para alterar apenas um ambiente, edite o `terraform.tfvars` correspondente em `environments/<ambiente>/`.
+Edite o arquivo variables.tf (raiz) para modificar os valores padrão das variáveis (como memória, vCPUs, tamanho do disco, etc.). Para alterar apenas um ambiente, edite o terraform.tfvars correspondente em environments/<ambiente>/.
 
-### Modificar o esquema de particionamento
+Modificar o esquema de particionamento
 
-O template do kickstart (`modules/vm/templates/ks.cfg.tpl`) pode ser ajustado para alterar:
-- Tamanhos das partições (root, swap, boot).
-- Sistema de arquivos (atualmente ext4).
-- Volumes LVM.
+O template do kickstart (modules/vm/templates/ks.cfg.tpl) pode ser ajustado para alterar:
 
-### Adicionar novos pacotes
+Tamanhos das partições (root, swap, boot).
+Sistema de arquivos (atualmente ext4).
+Volumes LVM.
+Adicionar novos pacotes
 
-No template `ks.cfg.tpl`, a seção `%packages` pode ser estendida com pacotes adicionais.
+No template ks.cfg.tpl, a seção %packages pode ser estendida com pacotes adicionais.
 
-### Utilizar uma ISO diferente
+Utilizar uma ISO diferente
 
-Altere a variável `iso_path` no arquivo `terraform.tfvars` (ou no ambiente correspondente) para apontar para outra ISO compatível.
+Altere a variável iso_path no arquivo terraform.tfvars (ou no ambiente correspondente) para apontar para outra ISO compatível.
 
 ## 🤝 Contribuição
 
@@ -242,14 +243,105 @@ Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull r
 
 ## 📜 Licença
 
-Este projeto está sob a licença MIT. Consulte o arquivo [LICENSE](https://github.com/danilo01arrudal/ol10-kvm-onpremisse-terraform/blob/main/LICENSE) para mais detalhes.
+Este projeto está sob a licença MIT. Consulte o arquivo LICENSE para mais detalhes.
 
 ## 👤 Autor
 
-**Danilo Arruda**
+Danilo Arruda
 
 ## 🙏 Agradecimentos
 
-- [Oracle Linux](https://www.oracle.com/linux/) pela plataforma estável e confiável.
-- [Terraform](https://www.terraform.io/) pela poderosa ferramenta de Infrastructure as Code.
-- [KVM / libvirt](https://www.linux-kvm.org/) pela virtualização de alta performance.
+![Oracle Linux pela plataforma estável e confiável](https://www.oracle.com/linux/)
+![Terraform pela poderosa ferramenta de Infrastructure as Code](https://www.terraform.io/)
+![KVM / libvirt pela virtualização de alta performance](https://www.linux-kvm.org/)
+
+---
+
+#### `LICENSE`
+
+```MIT License
+
+Copyright (c) 2025 Danilo Arruda
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
+#### `.gitignore`
+Terraform
+
+.terraform/
+*.tfstate
+.tfstate.
+.terraform.lock.hcl
+terraform.tfvars
+terraform.tfvars.json
+*.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+Generated files
+
+data/kickstart/*.cfg
+!data/kickstart/.gitkeep
+
+OS files
+
+.DS_Store
+Thumbs.db
+
+Logs
+
+*.log
+
+text
+
+---
+
+#### `terraform.tfvars.example`
+```hcl
+# Exemplo de configuração para o projeto
+# Copie este arquivo para terraform.tfvars e ajuste os valores conforme necessário
+
+# Configuração da VM (objeto)
+vm_config = {
+  name          = "ol8-10-vm-example"
+  memory        = 10240
+  vcpus         = 2
+  disk_size_gb  = 59
+  disk_size_mb  = 59391
+  swap_size_mb  = 8192
+  ip            = "192.168.122.23"
+  gateway       = "192.168.122.1"
+  netmask       = "255.255.255.0"
+  dns           = "192.168.122.1"
+  hostname      = "meu-hostname"
+  iso_path      = "/var/lib/libvirt/images/OracleLinux-R8-U10-x86_64-boot-uek.iso"
+  disk_path     = "/var/lib/libvirt/images/ol8-10-vm-example.qcow2"
+  network       = "default"
+  timezone      = "America/Fortaleza"
+  root_password_hash = "$6$RjRI3j88ic7zyV5b$eXJoob5eB0BmfUwYkA6CSnsH5lvS8fzOXEIBxtxPY/Ro7.ydiICEfGoUoBTBeKpaK.zWuUArxnq5AUihKGnzW/"
+  user_name     = "danilo"
+  user_password_hash = "$6$lRG.Vtb/Bdv2OEnr$U3OrQI9CegRvKgX0jM.P6CcK9HbVr4Da6K3IxG0fY0B5FD1hhSEJtr3vtuJi./eiHPwNEwS5Z5sM4V/X28xSo."
+}
