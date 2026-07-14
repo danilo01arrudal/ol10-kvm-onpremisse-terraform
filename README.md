@@ -27,6 +27,8 @@ Este projeto tem como objetivo automatizar a criação de máquinas virtuais com
 | **Segurança** | As senhas do usuário root e do usuário não-root são configuradas via hashes SHA-512 (gerados com `openssl passwd -6`). |
 | **Separação por ambiente** | Estrutura de diretórios que permite configurações distintas para desenvolvimento, homologação e produção. |
 
+---
+
 ## 🗂️ Estrutura do Projeto
 
 ```plaintext
@@ -65,6 +67,8 @@ ol10-kvm-onpremisse-terraform/
 └── troubleshooting.md
 ```
 
+---
+
 ## 📄 Principais Arquivos e suas Funções
 
 ### Raiz do Projeto
@@ -97,6 +101,8 @@ ol10-kvm-onpremisse-terraform/
 | **environments/** | Configurações específicas por ambiente (dev, hom, prd). Cada um contém seu próprio `terraform.tfvars`. |
 | **docs/** | Documentação adicional (arquitetura, solução de problemas, etc.). |
 
+---
+
 ## ⚙️ Tecnologias Utilizadas
 
 | Tecnologia | Versão | Finalidade |
@@ -108,6 +114,8 @@ ol10-kvm-onpremisse-terraform/
 | virt-install | — | Utilitário para criação de VMs via linha de comando. |
 | Jinja2 | — | Template engine utilizada para gerar o arquivo de kickstart dinamicamente. |
 
+---
+
 ## ✅ Pré‑requisitos
 
 Antes de executar o projeto, certifique-se de que:
@@ -117,6 +125,8 @@ Antes de executar o projeto, certifique-se de que:
 - A ISO de instalação do Oracle Linux 8.10 esteja disponível no caminho definido (ex: `/var/lib/libvirt/images/OracleLinux-R8-U10-x86_64-boot-uek.iso`).
 - O usuário que executa o Terraform tenha permissão para acessar o libvirt (geralmente via `qemu:///system`) e para escrever no diretório de discos.
 - O diretório de discos (ex: `/var/lib/libvirt/images/`) tenha espaço disponível e permissões adequadas.
+
+---
 
 ## 🚀 Como Utilizar
 
@@ -203,6 +213,8 @@ Parar a VM (se estiver em execução).
 Removê-la do libvirt.
 Excluir o arquivo de disco associado.
 
+---
+
 ## 🌍 Trabalhando com Ambientes
 
 O projeto suporta a separação de configurações por ambiente (desenvolvimento, homologação, produção). Para utilizar um ambiente específico:
@@ -215,6 +227,8 @@ terraform apply
 ```
 
 Cada diretório de ambiente contém seu próprio arquivo terraform.tfvars com as configurações específicas daquele ambiente.
+
+---
 
 ## 🔧 Personalização
 
@@ -237,23 +251,32 @@ Utilizar uma ISO diferente
 
 Altere a variável iso_path no arquivo terraform.tfvars (ou no ambiente correspondente) para apontar para outra ISO compatível.
 
+---
+
 ## 🤝 Contribuição
 
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests com melhorias, correções ou novas funcionalidades.
 
-## 📜 Licença
+---
 
-Este projeto está sob a licença MIT. Consulte o arquivo LICENSE para mais detalhes.
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Consulte o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
 
 ## 👤 Autor
 
-Danilo Arruda
+**Danilo Arruda**  
+- GitHub: [@danilo01arrudal](https://github.com/danilo01arrudal)
+
+---
 
 ## 🙏 Agradecimentos
 
-![Oracle Linux pela plataforma estável e confiável](https://www.oracle.com/linux/)
-![Terraform pela poderosa ferramenta de Infrastructure as Code](https://www.terraform.io/)
-![KVM / libvirt pela virtualização de alta performance](https://www.linux-kvm.org/)
+- [Oracle Linux pela plataforma estável e confiável](https://www.oracle.com/linux/)
+- [Terraform pela poderosa ferramenta de Infrastructure as Code](https://www.terraform.io/)
+- [KVM / libvirt pela virtualização de alta performance](https://www.linux-kvm.org/)
 
 ---
 
