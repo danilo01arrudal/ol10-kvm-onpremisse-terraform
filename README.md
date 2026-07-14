@@ -1,8 +1,8 @@
 # Provisionamento Automatizado de VMs Oracle Linux 8.10 com Terraform em ambiente on-premisse servidor KVM Oracle Linux 10
 
 [![GitHub](https://img.shields.io/badge/Repository-danilo01arrudal/ol10--kvm--onpremisse--terraform-blue?logo=github)](https://github.com/danilo01arrudal/ol10-kvm-onpremisse-terraform)
-[![Terraform](https://img.shields.io/badge/Terraform-1.0+-purple?logo=terraform)](https://www.terraform.io/)
-[![Oracle Linux](https://img.shields.io/badge/Oracle%20Linux-8.10-red?logo=oracle)](https://www.oracle.com/linux/)
+[![Terraform](https://img.shields.io/badge/Terraform-1.15+-purple?logo=terraform)](https://www.terraform.io/)
+[![Oracle Linux](https://img.shields.io/badge/Oracle%20Linux-10.1-red?logo=oracle)](https://www.oracle.com/linux/)
 [![KVM](https://img.shields.io/badge/KVM-QEMU-blue?logo=qemu)](https://www.linux-kvm.org/)
 
 ## Visão Geral
