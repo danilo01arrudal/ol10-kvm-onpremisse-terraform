@@ -156,6 +156,7 @@ Gerando hashes de senha:
 Para gerar os hashes das senhas (root e usuário), utilize o script auxiliar:
 
 ```bash
+chmod +x data/scripts/generate-hash.sh
 ./data/scripts/generate-hash.sh "sua_senha"
 ```
 
