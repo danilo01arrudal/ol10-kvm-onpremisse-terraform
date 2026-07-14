@@ -1,0 +1,21 @@
+environment = "hom"
+vm_config = {
+  name          = "ol8-hom"
+  memory        = 8192
+  vcpus         = 4
+  disk_size_gb  = 50
+  disk_size_mb  = 51200
+  swap_size_mb  = 8192
+  ip            = "192.168.122.51"
+  gateway       = "192.168.122.1"
+  netmask       = "255.255.255.0"
+  dns           = "192.168.122.1"
+  hostname      = "hom-server"
+  iso_path      = "/var/lib/libvirt/images/OracleLinux-R8-U10-x86_64-boot-uek.iso"
+  disk_path     = "/var/lib/libvirt/images/ol8-hom.qcow2"
+  network       = "default"
+  timezone      = "America/Fortaleza"
+  root_password_hash = "$6$def456..."
+  user_name     = "homolog"
+  user_password_hash = "$6$uvw012..."
+}
