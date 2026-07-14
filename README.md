@@ -27,8 +27,6 @@ Este projeto tem como objetivo automatizar a criação de máquinas virtuais com
 | **Segurança** | As senhas do usuário root e do usuário não-root são configuradas via hashes SHA-512 (gerados com `openssl passwd -6`). |
 | **Separação por ambiente** | Estrutura de diretórios que permite configurações distintas para desenvolvimento, homologação e produção. |
 
----
-
 ## 🗂️ Estrutura do Projeto
 
 ```plaintext
@@ -44,30 +42,28 @@ ol10-kvm-onpremisse-terraform/
 ├── main.tf
 ├── outputs.tf
 ├── modules/
-│ └── vm/
-│ ├── variables.tf
-│ ├── locals.tf
-│ ├── main.tf
-│ ├── outputs.tf
-│ └── templates/
-│ └── ks.cfg.tpl
+│   └── vm/
+│       ├── variables.tf
+│       ├── locals.tf
+│       ├── main.tf
+│       ├── outputs.tf
+│       └── templates/
+│           └── ks.cfg.tpl
 ├── data/
-│ ├── kickstart/
-│ └── scripts/
-│ └── generate-hash.sh
+│   ├── kickstart/
+│   └── scripts/
+│       └── generate-hash.sh
 ├── environments/
-│ ├── dev/
-│ │ └── terraform.tfvars
-│ ├── hom/
-│ │ └── terraform.tfvars
-│ └── prd/
-│ └── terraform.tfvars
+│   ├── dev/
+│   │   └── terraform.tfvars
+│   ├── hom/
+│   │   └── terraform.tfvars
+│   └── prd/
+│       └── terraform.tfvars
 └── docs/
-├── architecture.md
-└── troubleshooting.md
+    ├── architecture.md
+    └── troubleshooting.md
 ```
-
----
 
 ## 📄 Principais Arquivos e suas Funções
 
@@ -101,8 +97,6 @@ ol10-kvm-onpremisse-terraform/
 | **environments/** | Configurações específicas por ambiente (dev, hom, prd). Cada um contém seu próprio `terraform.tfvars`. |
 | **docs/** | Documentação adicional (arquitetura, solução de problemas, etc.). |
 
----
-
 ## ⚙️ Tecnologias Utilizadas
 
 | Tecnologia | Versão | Finalidade |
@@ -114,30 +108,154 @@ ol10-kvm-onpremisse-terraform/
 | virt-install | — | Utilitário para criação de VMs via linha de comando. |
 | Jinja2 | — | Template engine utilizada para gerar o arquivo de kickstart dinamicamente. |
 
----
-
 ## ✅ Pré‑requisitos
 
-Antes de executar o projeto, certifique-se de que:
+Antes de executar o projeto, certifique-se de que o servidor host atenda aos seguintes requisitos:
 
-- O servidor host esteja rodando **Oracle Linux 10** (ou qualquer distribuição com suporte a KVM).
-- Os pacotes `qemu-kvm`, `libvirt`, `virt-install` e `terraform` estejam instalados.
-- A ISO de instalação do Oracle Linux 8.10 esteja disponível no caminho definido (ex: `/var/lib/libvirt/images/OracleLinux-R8-U10-x86_64-boot-uek.iso`).
-- O usuário que executa o Terraform tenha permissão para acessar o libvirt (geralmente via `qemu:///system`) e para escrever no diretório de discos.
-- O diretório de discos (ex: `/var/lib/libvirt/images/`) tenha espaço disponível e permissões adequadas.
+### 1. Sistema Operacional
+- **Oracle Linux 10** (ou qualquer distribuição Linux com suporte a KVM/libvirt).
+- Arquitetura **x86_64**.
+
+### 2. Verificação de Hardware
+Certifique-se de que a virtualização por hardware (Intel VT-x ou AMD-V) está habilitada na BIOS e suportada pelo kernel:
+
+```bash
+grep -E "vmx|svm" /proc/cpuinfo
+```
+
+Se não houver saída, ative a virtualização na BIOS.
+
+### 3. Pacotes e Ferramentas
+Instale os seguintes pacotes usando o gerenciador `dnf` (ou `yum`):
+
+```bash
+sudo dnf install -y qemu-kvm libvirt virt-install openssl
+```
+
+- **qemu-kvm**: hipervisor KVM.
+- **libvirt**: API de gerenciamento de virtualização.
+- **virt-install**: utilitário de linha de comando para criar VMs.
+- **openssl**: necessário para gerar hashes de senha (SHA‑512).
+
+### 4. Terraform
+O Terraform **não** está disponível nos repositórios padrão do Oracle Linux. Siga os passos abaixo para instalá‑lo:
+
+**Método 1 – Repositório oficial (recomendado):**
+
+```bash
+# Adicionar o repositório oficial do HashiCorp
+sudo dnf install -y dnf-plugins-core
+sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+
+# Instalar o Terraform
+sudo dnf install -y terraform
+
+# Verificar a instalação
+terraform --version
+```
+
+**Método 2 – Binário manual:**
+
+```bash
+wget https://releases.hashicorp.com/terraform/1.9.5/terraform_1.9.5_linux_amd64.zip
+unzip terraform_1.9.5_linux_amd64.zip
+sudo mv terraform /usr/local/bin/
+```
+
+(Substitua a versão pela mais recente disponível.)
+
+### 5. Serviço libvirtd
+Habilite e inicie o serviço libvirt:
+
+```bash
+sudo systemctl enable --now libvirtd
+sudo systemctl enable --now virtlogd
+```
+
+Verifique o status:
+
+```bash
+sudo systemctl status libvirtd
+```
+
+### 6. Permissões de Usuário
+O usuário que executará o Terraform (geralmente o mesmo que roda o `virt-install`) precisa ter permissão para acessar o libvirt e escrever nos diretórios de discos.
+
+**Opção A – Adicionar o usuário ao grupo `libvirt`** (recomendado):
+
+```bash
+sudo usermod -aG libvirt,kvm $USER
+# Faça logout e login novamente para aplicar o grupo
+```
+
+**Opção B – Executar como root** (não recomendado para produção).
+
+Além disso, garanta que o diretório onde os discos serão criados (ex: `/var/lib/libvirt/images/`) tenha permissões adequadas:
+
+```bash
+sudo chown -R $USER:$USER /var/lib/libvirt/images/
+```
+
+### 7. Rede
+Certifique‑se de que a rede padrão do libvirt (`default`) esteja ativa e configurada:
+
+```bash
+sudo virsh net-list --all
+sudo virsh net-start default   # se estiver inativa
+sudo virsh net-autostart default
+```
+
+Para verificar os detalhes da rede:
+
+```bash
+sudo virsh net-dumpxml default | grep -A5 "<ip"
+```
+
+A rede padrão geralmente utiliza o range `192.168.122.0/24`.
+
+### 8. ISO de Instalação
+Baixe a ISO do Oracle Linux 8.10 e coloque‑a em um diretório acessível (ex: `/var/lib/libvirt/images/OracleLinux-R8-U10-x86_64-boot-uek.iso`). Você pode obter a ISO no [site oficial da Oracle](https://yum.oracle.com/oracle-linux-isos.html).
+
+Exemplo de download com `wget`:
+
+```bash
+wget https://yum.oracle.com/ISOS/OracleLinux/OL8/u10/x86_64/OracleLinux-R8-U10-x86_64-boot-uek.iso -O /var/lib/libvirt/images/OracleLinux-R8-U10-x86_64-boot-uek.iso
+```
+
+### 9. Espaço em Disco
+Verifique se há espaço suficiente no diretório de discos (pelo menos o tamanho definido em `disk_size_gb`).
+
+### 10. Variáveis de Ambiente (opcional)
+Para facilitar, defina a variável `LIBVIRT_DEFAULT_URI` para apontar para o sistema QEMU:
+
+```bash
+export LIBVIRT_DEFAULT_URI="qemu:///system"
+```
+
+Adicione ao seu `~/.bashrc` para persistência.
+
+### 11. Teste de Funcionamento
+Antes de executar o Terraform, teste manualmente o `virt-install` com uma VM simples para garantir que tudo está funcionando:
+
+```bash
+virt-install --version
+virsh list --all
+```
 
 ---
+
+Após atender a todos os requisitos, prossiga com a configuração e uso do projeto conforme descrito na seção **🚀 Como Utilizar**.
 
 ## 🚀 Como Utilizar
 
-#### 1. Clonar o repositório
+### 1. Clonar o repositório
 
 ```bash
 git clone https://github.com/danilo01arrudal/ol10-kvm-onpremisse-terraform.git
 cd ol10-kvm-onpremisse-terraform
 ```
 
-#### 2. Configurar as variáveis
+### 2. Configurar as variáveis
 
 Copie o arquivo de exemplo e edite conforme sua necessidade:
 
@@ -145,13 +263,14 @@ Copie o arquivo de exemplo e edite conforme sua necessidade:
 cp terraform.tfvars.example terraform.tfvars
 ```
 
-No arquivo terraform.tfvars, defina pelo menos:
+No arquivo `terraform.tfvars`, defina pelo menos:
 
-vm_name: nome desejado para a VM.
-ip: endereço IP estático que a VM terá.
-iso_path: caminho completo para a ISO de instalação.
-disk_path: caminho onde o disco da VM será criado.
-Gerando hashes de senha:
+- `vm_name`: nome desejado para a VM.
+- `ip`: endereço IP estático que a VM terá.
+- `iso_path`: caminho completo para a ISO de instalação.
+- `disk_path`: caminho onde o disco da VM será criado.
+
+**Gerando hashes de senha:**
 
 Para gerar os hashes das senhas (root e usuário), utilize o script auxiliar:
 
@@ -160,21 +279,21 @@ chmod +x data/scripts/generate-hash.sh
 ./data/scripts/generate-hash.sh "sua_senha"
 ```
 
-Ou diretamente com openssl:
+Ou diretamente com `openssl`:
 
 ```bash
 openssl passwd -6 "sua_senha"
 ```
 
-Substitua os valores de root_password_hash e user_password_hash no terraform.tfvars pelos hashes gerados.
+Substitua os valores de `root_password_hash` e `user_password_hash` no `terraform.tfvars` pelos hashes gerados.
 
-#### 3. Inicializar o Terraform
+### 3. Inicializar o Terraform
 
 ```bash
 terraform init
 ```
 
-#### 4. Planejar e aplicar
+### 4. Planejar e aplicar
 
 Visualize o que será criado:
 
@@ -189,12 +308,11 @@ terraform apply
 ```
 
 O Terraform irá:
+- Gerar o arquivo `anaconda-ks-<nome_da_vm>.cfg` no diretório `data/kickstart/`.
+- Executar o `virt-install` com os parâmetros configurados.
+- Iniciar a instalação da VM em segundo plano (sem console gráfico).
 
-Gerar o arquivo anaconda-ks-<nome_da_vm>.cfg no diretório data/kickstart/.
-Executar o virt-install com os parâmetros configurados.
-Iniciar a instalação da VM em segundo plano (sem console gráfico).
-
-#### 5. Acompanhar a instalação
+### 5. Acompanhar a instalação
 
 Para ver o progresso da instalação, utilize o console da VM:
 
@@ -202,19 +320,16 @@ Para ver o progresso da instalação, utilize o console da VM:
 virsh console <nome_da_vm>
 ```
 
-6. Destruir a VM (se necessário)
+### 6. Destruir a VM (se necessário)
 
 ```bash
 terraform destroy
 ```
 
 Este comando irá:
-
-Parar a VM (se estiver em execução).
-Removê-la do libvirt.
-Excluir o arquivo de disco associado.
-
----
+- Parar a VM (se estiver em execução).
+- Removê-la do libvirt.
+- Excluir o arquivo de disco associado.
 
 ## 🌍 Trabalhando com Ambientes
 
@@ -227,59 +342,44 @@ terraform plan
 terraform apply
 ```
 
-Cada diretório de ambiente contém seu próprio arquivo terraform.tfvars com as configurações específicas daquele ambiente.
-
----
+Cada diretório de ambiente contém seu próprio arquivo `terraform.tfvars` com as configurações específicas daquele ambiente.
 
 ## 🔧 Personalização
 
-Alterar parâmetros padrão
+### Alterar parâmetros padrão
 
-Edite o arquivo variables.tf (raiz) para modificar os valores padrão das variáveis (como memória, vCPUs, tamanho do disco, etc.). Para alterar apenas um ambiente, edite o terraform.tfvars correspondente em environments/<ambiente>/.
+Edite o arquivo `variables.tf` (raiz) para modificar os valores padrão das variáveis (como memória, vCPUs, tamanho do disco, etc.). Para alterar apenas um ambiente, edite o `terraform.tfvars` correspondente em `environments/<ambiente>/`.
 
-Modificar o esquema de particionamento
+### Modificar o esquema de particionamento
 
-O template do kickstart (modules/vm/templates/ks.cfg.tpl) pode ser ajustado para alterar:
+O template do kickstart (`modules/vm/templates/ks.cfg.tpl`) pode ser ajustado para alterar:
+- Tamanhos das partições (root, swap, boot).
+- Sistema de arquivos (atualmente ext4).
+- Volumes LVM.
 
-Tamanhos das partições (root, swap, boot).
-Sistema de arquivos (atualmente ext4).
-Volumes LVM.
-Adicionar novos pacotes
+### Adicionar novos pacotes
 
-No template ks.cfg.tpl, a seção %packages pode ser estendida com pacotes adicionais.
+No template `ks.cfg.tpl`, a seção `%packages` pode ser estendida com pacotes adicionais.
 
-Utilizar uma ISO diferente
+### Utilizar uma ISO diferente
 
-Altere a variável iso_path no arquivo terraform.tfvars (ou no ambiente correspondente) para apontar para outra ISO compatível.
-
----
+Altere a variável `iso_path` no arquivo `terraform.tfvars` (ou no ambiente correspondente) para apontar para outra ISO compatível.
 
 ## 🤝 Contribuição
 
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests com melhorias, correções ou novas funcionalidades.
 
----
+## 📜 Licença
 
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Consulte o arquivo [LICENSE](LICENSE) para mais detalhes.
-
----
+Este projeto está sob a licença MIT. Consulte o arquivo [LICENSE](https://github.com/danilo01arrudal/ol10-kvm-onpremisse-terraform/blob/main/LICENSE) para mais detalhes.
 
 ## 👤 Autor
 
-**Danilo Arruda**  
-- GitHub: [@danilo01arrudal](https://github.com/danilo01arrudal)
-
----
+**Danilo Arruda**
 
 ## 🙏 Agradecimentos
 
-- [Oracle Linux pela plataforma estável e confiável](https://www.oracle.com/linux/)
-- [Terraform pela poderosa ferramenta de Infrastructure as Code](https://www.terraform.io/)
-- [KVM / libvirt pela virtualização de alta performance](https://www.linux-kvm.org/)
-
-
-
-
+- [Oracle Linux](https://www.oracle.com/linux/) pela plataforma estável e confiável.
+- [Terraform](https://www.terraform.io/) pela poderosa ferramenta de Infrastructure as Code.
+- [KVM / libvirt](https://www.linux-kvm.org/) pela virtualização de alta performance.
 
