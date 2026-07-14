@@ -1,0 +1,21 @@
+environment = "dev"
+vm_config = {
+  name          = "ol8-dev"
+  memory        = 4096
+  vcpus         = 2
+  disk_size_gb  = 30
+  disk_size_mb  = 30720
+  swap_size_mb  = 4096
+  ip            = "192.168.122.50"
+  gateway       = "192.168.122.1"
+  netmask       = "255.255.255.0"
+  dns           = "192.168.122.1"
+  hostname      = "dev-server"
+  iso_path      = "/var/lib/libvirt/images/OracleLinux-R8-U10-x86_64-boot-uek.iso"
+  disk_path     = "/var/lib/libvirt/images/ol8-dev.qcow2"
+  network       = "default"
+  timezone      = "America/Fortaleza"
+  root_password_hash = "$6$abc123..."
+  user_name     = "devops"
+  user_password_hash = "$6$xyz789..."
+}
