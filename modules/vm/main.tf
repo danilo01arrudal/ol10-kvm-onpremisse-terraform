@@ -20,7 +20,6 @@ resource "local_file" "ks" {
 # Recurso principal que executa o virt-install
 resource "null_resource" "vm" {
   triggers = {
-    ks_content   = local_file.ks.content
     vm_name      = var.name
     memory       = var.memory
     vcpus        = var.vcpus
@@ -29,37 +28,39 @@ resource "null_resource" "vm" {
     iso_path     = var.iso_path
     ip           = var.ip
     network      = var.network
+    ks_filename  = local.ks_filename
+    ks_content   = local_file.ks.content
   }
 
   provisioner "local-exec" {
     command = <<-EOT
       # Cria diretório para o disco se não existir
-      mkdir -p "$(dirname ${var.disk_path})"
+      mkdir -p "$(dirname ${self.triggers.disk_path})"
       # Remove disco antigo, se existir
-      rm -f ${var.disk_path}
+      rm -f ${self.triggers.disk_path}
       # Executa a instalação
       virt-install --virt-type kvm \
-        --name ${var.name} \
-        --memory ${var.memory} \
-        --vcpus ${var.vcpus} \
+        --name ${self.triggers.vm_name} \
+        --memory ${self.triggers.memory} \
+        --vcpus ${self.triggers.vcpus} \
         --os-variant ol8.10 \
-        --cdrom ${var.iso_path} \
-        --network network=${var.network},model=virtio \
-        --disk path=${var.disk_path},size=${var.disk_size_gb} \
+        --cdrom ${self.triggers.iso_path} \
+        --network network=${self.triggers.network},model=virtio \
+        --disk path=${self.triggers.disk_path},size=${self.triggers.disk_size_gb} \
         --initrd-inject ${local_file.ks.filename} \
-        --extra-args "inst.ks=file:/${local.ks_filename} console=tty0 console=ttyS0,115200" \
+        --extra-args "inst.ks=file:/${self.triggers.ks_filename} console=tty0 console=ttyS0,115200" \
         --noautoconsole
-      echo "VM ${var.name} criada com sucesso."
+      echo "VM ${self.triggers.vm_name} criada com sucesso."
     EOT
   }
 
   provisioner "local-exec" {
     when = destroy
     command = <<-EOT
-      echo "Destruindo VM ${var.name}..."
-      virsh destroy ${var.name} 2>/dev/null || true
-      virsh undefine ${var.name} --remove-all-storage 2>/dev/null || true
-      rm -f ${var.disk_path}
+      echo "Destruindo VM ${self.triggers.vm_name}..."
+      virsh destroy ${self.triggers.vm_name} 2>/dev/null || true
+      virsh undefine ${self.triggers.vm_name} --remove-all-storage 2>/dev/null || true
+      rm -f ${self.triggers.disk_path}
       echo "VM removida."
     EOT
   }
