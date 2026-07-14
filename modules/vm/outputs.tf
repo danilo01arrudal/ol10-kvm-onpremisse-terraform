@@ -12,3 +12,8 @@ output "kickstart_file" {
   description = "Caminho do arquivo kickstart gerado"
   value       = local_file.ks.filename
 }
+
+output "ssh_command" {
+  description = "Comando SSH para a VM"
+  value       = "ssh ${var.user_name}@${var.ip}"
+}

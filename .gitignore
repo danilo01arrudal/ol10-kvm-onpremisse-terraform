@@ -1,8 +1,7 @@
-#### `.gitignore`
-
+# Terraform
 .terraform/
 *.tfstate
-.tfstate.
+*.tfstate.*
 .terraform.lock.hcl
 terraform.tfvars
 terraform.tfvars.json
@@ -13,3 +12,17 @@ override.tf.json
 *_override.tf.json
 .terraformrc
 terraform.rc
+
+# Generated files
+data/kickstart/*.cfg
+!data/kickstart/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Backup
+*.tfstate.backup

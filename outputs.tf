@@ -12,3 +12,8 @@ output "kickstart_file" {
   description = "Caminho do arquivo kickstart gerado"
   value       = module.vm.kickstart_file
 }
+
+output "ssh_command" {
+  description = "Comando para conectar via SSH à VM"
+  value       = "ssh ${var.vm_config.user_name}@${var.vm_config.ip}"
+}
