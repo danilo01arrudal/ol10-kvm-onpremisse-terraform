@@ -1,0 +1,15 @@
+#### `.gitignore`
+
+.terraform/
+*.tfstate
+.tfstate.
+.terraform.lock.hcl
+terraform.tfvars
+terraform.tfvars.json
+*.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
