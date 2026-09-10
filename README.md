@@ -259,7 +259,7 @@ cd ol10-kvm-onpremisse-terraform
 
 ### 2. Configurar as variáveis
 
-Copie o arquivo de exemplo com base no tipo de ambiente  {prd, dev, hml} e edite conforme sua necessidade:
+Copie o arquivo de exemplo com base no tipo de ambiente  {prd, dev, hom} e edite conforme sua necessidade:
 
 ```bash
 cp ./environments/prd/terraform.tfvars.example terraform.tfvars
