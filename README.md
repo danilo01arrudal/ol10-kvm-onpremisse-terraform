@@ -340,6 +340,7 @@ Domain '<nome_da_vm>' started
 
 ### 7. Acessar a VM com os dados exibidos durante o comando terraform apply 
 
+```bash
 Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
 
 Outputs:
@@ -348,6 +349,7 @@ kickstart_file = "modules/vm/../../data/kickstart/anaconda-ks-<nome_da_vm>.cfg"
 ssh_command = "ssh admin@192.168.122.<$IP>"
 vm_ip = "192.168.122.<$IP>"
 vm_name = "<nome_da_vm>"
+```
 
 ```bash
 ssh admin@192.168.122.<$IP>
