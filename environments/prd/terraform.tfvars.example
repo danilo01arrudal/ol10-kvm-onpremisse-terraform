@@ -15,7 +15,7 @@ vm_config = {
   disk_path     = "/var/lib/libvirt/images/ol8-prd.qcow2"
   network       = "default"
   timezone      = "America/Fortaleza"
-  root_password_hash = "$6$jy.qRsUB7OXa2jfs$cAZSmnGxWPe/bwIsAJ4oVNXb8AQlJcmKDkSI6E2NJECIPVxTFmJZn5R8bnZlkDAk1.rEDFMjA57iw4bGdgIr2."
+  root_password_hash = "$6$def456..."
   user_name     = "admin"
-  user_password_hash = "$6$jy.qRsUB7OXa2jfs$cAZSmnGxWPe/bwIsAJ4oVNXb8AQlJcmKDkSI6E2NJECIPVxTFmJZn5R8bnZlkDAk1.rEDFMjA57iw4bGdgIr2."
+  user_password_hash = "$6$def456..."
 }
