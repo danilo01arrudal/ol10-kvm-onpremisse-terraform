@@ -331,14 +331,29 @@ virsh list --all
  Id   Name           State
 ------------------------------
  -    <nome_da_vm>   shut off
- ```
+```
 
 ```bash
 virsh start "<nome_da_vm>"
 Domain '<nome_da_vm>' started
- ```
+```
 
-### 7. Destruir a VM (se necessário)
+### 7. Acessar a VM com os dados exibidos durante o comando terraform apply 
+
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+kickstart_file = "modules/vm/../../data/kickstart/anaconda-ks-<nome_da_vm>.cfg"
+ssh_command = "ssh admin@192.168.122.<$IP>"
+vm_ip = "192.168.122.<$IP>"
+vm_name = "<nome_da_vm>"
+
+```bash
+ssh admin@192.168.122.<$IP>
+```
+
+### 8. Destruir a VM (se necessário)
 
 ```bash
 terraform destroy
