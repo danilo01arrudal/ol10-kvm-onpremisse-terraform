@@ -216,12 +216,12 @@ sudo virsh net-dumpxml default | grep -A5 "<ip"
 A rede padrão geralmente utiliza o range `192.168.122.0/24`.
 
 ### 8. ISO de Instalação
-Baixe a ISO do Oracle Linux 8.10 e coloque‑a em um diretório acessível (ex: `/var/lib/libvirt/images/OracleLinux-R8-U10-x86_64-boot-uek.iso`). Você pode obter a ISO no [site oficial da Oracle](https://yum.oracle.com/oracle-linux-isos.html).
+Baixe a ISO do Oracle Linux 8.10 e coloque‑a em um diretório acessível (ex: `/var/lib/libvirt/images/OracleLinux-R8-U10-x86_64-dvd.iso`). Você pode obter a ISO no [site oficial da Oracle](https://yum.oracle.com/oracle-linux-isos.html).
 
 Exemplo de download com `wget`:
 
 ```bash
-wget https://yum.oracle.com/ISOS/OracleLinux/OL8/u10/x86_64/OracleLinux-R8-U10-x86_64-boot-uek.iso -O /var/lib/libvirt/images/OracleLinux-R8-U10-x86_64-boot-uek.iso
+wget https://yum.oracle.com/ISOS/OracleLinux/OL8/u10/x86_64/OracleLinux-R8-U10-x86_64-dvd.iso -O /var/lib/libvirt/images/OracleLinux-R8-U10-x86_64-dvd.iso
 ```
 
 ### 9. Espaço em Disco
