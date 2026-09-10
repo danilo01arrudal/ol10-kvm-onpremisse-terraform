@@ -357,6 +357,8 @@ ssh admin@192.168.122.<$IP>
 
 ### 8. Destruir a VM (se necessário)
 
+Esse comando ira desligar a VM e remover os arquivos de dados presentes em : /var/lib/libvirt/images/
+
 ```bash
 terraform destroy
 ```
