@@ -328,14 +328,14 @@ Primeiro listamos as VMs existentes e depois iniciamos o ambiente.
 
 ```bash
 virsh list --all 
- Id   Name      State
---------------------------
- -    ol8-prd   shut off
+ Id   Name           State
+------------------------------
+ -    <nome_da_vm>   shut off
  ```
 
 ```bash
-virsh start "ol8-prd"
-Domain 'ol8-prd' started
+virsh start "<nome_da_vm>"
+Domain '<nome_da_vm>' started
  ```
 
 ### 7. Destruir a VM (se necessário)
