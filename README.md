@@ -322,7 +322,23 @@ Para ver o progresso da instalação, utilize o console da VM:
 virsh console <nome_da_vm>
 ```
 
-### 6. Destruir a VM (se necessário)
+### 6. Ligar a VM apos a criacao 
+
+Primeiro listamos as VMs existentes e depois iniciamos o ambiente. 
+
+```bash
+virsh list --all 
+ Id   Name      State
+--------------------------
+ -    ol8-prd   shut off
+ ```
+
+```bash
+virsh start "ol8-prd"
+Domain 'ol8-prd' started
+ ```
+
+### 7. Destruir a VM (se necessário)
 
 ```bash
 terraform destroy
