@@ -34,28 +34,46 @@ resource "null_resource" "vm" {
 
   provisioner "local-exec" {
     command = <<-EOT
-      # Cria diretório para o disco se não existir
+      set -e # Aborta a execução se qualquer comando falhar
+
+      LOG_DIR="${path.module}/../../data/logs"
+      LOG_FILE="$LOG_DIR/install-${self.triggers.vm_name}.log"
+
+      # Garante a existência do diretório de logs
+      mkdir -p "$LOG_DIR"
+      
+      echo "=== [$(date '+%Y-%m-%d %H:%M:%S')] Iniciando provisionamento da VM ${self.triggers.vm_name} ===" | tee "$LOG_FILE"
+
+      # Cria diretório para o disco se não existir e remove disco anterior
       mkdir -p "$(dirname ${self.triggers.disk_path})"
-      # Remove disco antigo, se existir
-      rm -f ${self.triggers.disk_path}
-      # Executa a instalação
-      virt-install --virt-type kvm \
-        --name ${self.triggers.vm_name} \
-        --memory ${self.triggers.memory} \
-        --vcpus ${self.triggers.vcpus} \
+      rm -f "${self.triggers.disk_path}"
+
+      # Executa a instalação registrando saída e erros no log
+      if virt-install \
+        --virt-type kvm \
+        --name "${self.triggers.vm_name}" \
+        --memory "${self.triggers.memory}" \
+        --vcpus "${self.triggers.vcpus}" \
         --os-variant ol8.10 \
-        --cdrom ${self.triggers.iso_path} \
-        --network network=${self.triggers.network},model=virtio \
-        --disk path=${self.triggers.disk_path},size=${self.triggers.disk_size_gb} \
-        --initrd-inject ${local_file.ks.filename} \
+        --cdrom "${self.triggers.iso_path}" \
+        --network "network=${self.triggers.network},model=virtio" \
+        --disk "path=${self.triggers.disk_path},size=${self.triggers.disk_size_gb}" \
+        --initrd-inject "${local_file.ks.filename}" \
         --extra-args "inst.ks=file:/${self.triggers.ks_filename} console=tty0 console=ttyS0,115200" \
-        --noautoconsole
-      echo "VM ${self.triggers.vm_name} criada com sucesso."
+        --noautoconsole >> "$LOG_FILE" 2>&1; then
+        
+        echo "=== [$(date '+%Y-%m-%d %H:%M:%S')] VM ${self.triggers.vm_name} disparada com sucesso. ===" | tee -a "$LOG_FILE"
+      else
+        EXIT_CODE=$?
+        echo "=== [$(date '+%Y-%m-%d %H:%M:%S')] ERRO FATAL: Falha ao executar virt-install (Exit code $EXIT_CODE). ===" | tee -a "$LOG_FILE"
+        echo "Consulte os detalhes do erro em: $LOG_FILE" >&2
+        exit $EXIT_CODE
+      fi
     EOT
   }
 
   provisioner "local-exec" {
-    when = destroy
+    when    = destroy
     command = <<-EOT
       echo "Destruindo VM ${self.triggers.vm_name}..."
       virsh destroy ${self.triggers.vm_name} 2>/dev/null || true
