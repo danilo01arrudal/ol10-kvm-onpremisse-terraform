@@ -262,7 +262,7 @@ cd ol10-kvm-onpremisse-terraform
 Copie o arquivo de exemplo com base no tipo de ambiente  {prd, dev, hml} e edite conforme sua necessidade:
 
 ```bash
-cp ./environments/prd/terraform.tfvars.example .
+cp ./environments/prd/terraform.tfvars.example terraform.tfvars
 ```
 
 No arquivo `terraform.tfvars`, defina pelo menos:
