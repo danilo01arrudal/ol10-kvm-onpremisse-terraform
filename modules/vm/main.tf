@@ -55,7 +55,7 @@ resource "null_resource" "vm" {
         --memory "${self.triggers.memory}" \
         --vcpus "${self.triggers.vcpus}" \
         --os-variant ol8.10 \
-        --cdrom "${self.triggers.iso_path}" \
+        --location "${self.triggers.iso_path}" \
         --network "network=${self.triggers.network},model=virtio" \
         --disk "path=${self.triggers.disk_path},size=${self.triggers.disk_size_gb}" \
         --initrd-inject "${local_file.ks.filename}" \
