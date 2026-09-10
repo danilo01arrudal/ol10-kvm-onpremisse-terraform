@@ -41,7 +41,7 @@ resource "null_resource" "vm" {
 
       # Garante a existência do diretório de logs
       mkdir -p "$LOG_DIR"
-      
+
       echo "=== [$(date '+%Y-%m-%d %H:%M:%S')] Iniciando provisionamento da VM ${self.triggers.vm_name} ===" | tee "$LOG_FILE"
 
       # Cria diretório para o disco se não existir e remove disco anterior
@@ -61,7 +61,7 @@ resource "null_resource" "vm" {
         --initrd-inject "${local_file.ks.filename}" \
         --extra-args "inst.ks=file:/${self.triggers.ks_filename} console=tty0 console=ttyS0,115200" \
         --noautoconsole >> "$LOG_FILE" 2>&1; then
-        
+
         echo "=== [$(date '+%Y-%m-%d %H:%M:%S')] VM ${self.triggers.vm_name} disparada com sucesso. ===" | tee -a "$LOG_FILE"
       else
         EXIT_CODE=$?
