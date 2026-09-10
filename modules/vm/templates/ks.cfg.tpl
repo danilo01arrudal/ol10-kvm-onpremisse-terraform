@@ -1,55 +1,52 @@
 #version=OL8
 
-# Instalação 100% autônoma em modo texto sem interface gráfica
+# Instalação autônoma em modo texto
 text
 cmdline
 skipx
 
-# Fonte dos pacotes via rede (Repositórios Oficiais Oracle Linux 8)
-url --url="https://yum.oracle.com/repo/OracleLinux/OL8/baseos/latest/x86_64"
-repo --name="AppStream" --baseurl="https://yum.oracle.com/repo/OracleLinux/OL8/appstream/x86_64"
+# Utiliza a própria ISO DVD montada pelo virt-install como fonte de pacotes
+cdrom
 
 %packages
 @^minimal-environment
 kexec-tools
 %end
 
-# Keyboard layouts
+# Layout de teclado e linguagem
 keyboard --xlayouts='us'
-
-# System language
 lang en_US.UTF-8
 
-# Network information
+# Configuração de Rede Estática
 network --bootproto=static --device=enp1s0 --gateway=${gateway} --ip=${ip} --nameserver=${dns} --netmask=${netmask} --noipv6 --activate
 network --hostname=${hostname}
 
-# Run the Setup Agent on first boot
+# Desativa o assistente no primeiro boot
 firstboot --disable
 
-# Bootloader configuration (BIOS mode)
+# Configuração do Bootloader (BIOS)
 bootloader --location=mbr --boot-drive=vda
 
 ignoredisk --only-use=vda
-clearpart --all --initlabel   # Limpa todas as partições existentes
+clearpart --all --initlabel   # Limpa partições existentes
 
-# Disk partitioning with BIOS boot partition
+# Particionamento do Disco
 part biosboot --fstype="biosboot" --ondisk=vda --size=2
 part /boot --fstype="ext4" --ondisk=vda --size=1024
-part pv.610 --fstype="lvmpv" --ondisk=vda --grow          # PV ocupa o restante do disco
+part pv.610 --fstype="lvmpv" --ondisk=vda --grow
 
 volgroup ol --pesize=4096 pv.610
-logvol / --fstype="ext4" --grow --size=1024 --name=root --vgname=ol   # Root cresce automaticamente
+logvol / --fstype="ext4" --grow --size=1024 --name=root --vgname=ol
 logvol swap --fstype="swap" --size=${swap_size_mb} --name=swap --vgname=ol
 
-# System timezone
+# Fuso Horário
 timezone ${timezone} --isUtc
 
-# Root e User passwords
+# Senhas de Root e Usuário
 rootpw --iscrypted ${root_password_hash}
 user --groups=wheel --name=${user_name} --password=${user_password_hash} --iscrypted --gecos="${user_name}"
 
-# Aceita EULA automaticamente
+# Aceita licença de uso
 eula --agreed
 
 %addon com_redhat_kdump --disable --reserve-mb='auto'
@@ -61,5 +58,5 @@ pwpolicy user --minlen=6 --minquality=1 --notstrict --nochanges --emptyok
 pwpolicy luks --minlen=6 --minquality=1 --notstrict --nochanges --notempty
 %end
 
-# Reinicia e ejeta a mídia automaticamente ao finalizar
+# Reinicia e ejeta o DVD automaticamente ao finalizar
 reboot --eject
